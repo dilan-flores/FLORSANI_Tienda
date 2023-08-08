@@ -103,9 +103,9 @@ public class Admin_stock {
 
         // SE PRESENTA POR PANTALLA LA FECHA ACTUAL
         textFECHA.setValue(fechaActual);
-        textFECHA.setEnabled(false);
 
         // BLOQUEO DE EDICIÓN EN PRODUCTOS E INVENTARIO
+        textFECHA.setEnabled(false);
         textPRODUCTO.setEnabled(false);
         textPRECIO.setEnabled(false);
         textGanancia.setEnabled(false);
@@ -151,7 +151,7 @@ public class Admin_stock {
             conexion.close();
         }catch (Exception ex) {
             ex.printStackTrace();
-        }// INICIO BDD CARGAR PRODUCTOS EN TABLA
+        }// FIN BDD CARGAR PRODUCTOS EN TABLA
 
         buscarButton.addActionListener(new ActionListener() { // INICIO ACCIÓN BUCAR PRODUCTO
             @Override

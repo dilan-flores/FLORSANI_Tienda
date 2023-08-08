@@ -9,7 +9,7 @@ public class Admin extends JFrame implements ActionListener{
     private JMenu menu1; // MENÚ DE OPCIONES
     private JMenuItem INVENTARIO, ACTUALIZAR_PRODUCTO; // OPCIONES: INVENTARIO Y ACTUALIZAR PRODUCTO
     public Admin() {
-        barra = new JMenuBar();
+        barra = new JMenuBar(); // BARRA SUPERIOR
         setJMenuBar(barra);
         menu1 = new JMenu("MENU OPCIONES");
         barra.add(menu1); // SE AÑADE EL MENÚ A LA BARRA SUPERIOR

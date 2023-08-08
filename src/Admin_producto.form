@@ -85,7 +85,7 @@
           <font name="Arial" size="16" style="1"/>
         </properties>
       </component>
-      <component id="3169" class="javax.swing.JLabel" binding="Ganancia">
+      <component id="3169" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -103,7 +103,7 @@
           <font name="Arial" size="16" style="1"/>
         </properties>
       </component>
-      <component id="7d853" class="javax.swing.JLabel" binding="PrecioVenta">
+      <component id="7d853" class="javax.swing.JLabel">
         <constraints>
           <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -165,7 +165,7 @@
           <text value="🔎 Buscar"/>
         </properties>
       </component>
-      <component id="e492c" class="javax.swing.JLabel" binding="ValorTotal">
+      <component id="e492c" class="javax.swing.JLabel">
         <constraints>
           <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -183,7 +183,7 @@
           <font name="Arial" size="16" style="1"/>
         </properties>
       </component>
-      <component id="41c46" class="javax.swing.JLabel" binding="FechaRegistro">
+      <component id="41c46" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
