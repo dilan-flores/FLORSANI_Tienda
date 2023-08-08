@@ -308,66 +308,69 @@ public class Admin_stock {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textPrecioVenta.setEnabled(false);
-                try {// INICIO BDD INSERTAR PRODUCTOS
-
+                try {// INICIO BDD INSERTAR PRODUCTOS E INVENTARIO
+                    // CONEXIÓN BDD
                     Connection conexion;
                     conexion = getConection();
 
-                    //cod = "\"" + textCODIGO.getText() + "\"";
+                    // CONSULTA PARAMETRIZADA: INSERTAR UN NUEVO PRODUCTO
                     ps = conexion.prepareStatement("INSERT into producto values (?,?,?,?,?)");
                     ps.setString(1, textCODIGO.getText());
                     ps.setString(2, textPRODUCTO.getText());
                     ps.setString(3, textPRECIO.getText());
                     ps.setString(4, textGanancia.getText());
+                    // SE CALCULA EL PRECIO DE VENTA: PRECIO + GANANCIA
                     textPrecioVenta.setText(String.valueOf(Float.parseFloat(textPRECIO.getText())+Float.parseFloat(textGanancia.getText())));
                     ps.setString(5, textPrecioVenta.getText());
-
+                    // RESULTADOS DE LA ACTUALIZACIÓN
                     res = ps.executeUpdate();
                     if(!(res >0)){
                         JOptionPane.showMessageDialog(null,"PRODUCTO NO GUARDADO EN TABLA PRODUCTOS");
 
                     }
-
+                    // SE OBTIENE LA FECHA DE REGISTRO DE LA FACTURA
                     String FR = textFechaRegistrada.getText();
-
+                    // CONSULTA PARAMETRIZADA: SE INSERTA UNA NUEVO PRODUCTO EN INVENTARIO
                     ps = conexion.prepareStatement("Insert into inventario values (?,?,CURDATE(),?,?)");
                     ps.setString(1, textCODIGO.getText());
                     ps.setString(2, FR);
                     ps.setString(3, textCANTIDAD.getText());
                     textPrecioTotal.setText(String.valueOf(Integer.parseInt(textCANTIDAD.getText())*Float.parseFloat(textPrecioVenta.getText())));
                     ps.setString(4, textPrecioTotal.getText());
-
+                    // RESULTADOS DE LA ACTUALIZACIÓN
                     res = ps.executeUpdate();
                     if(!(res >0)){
                         JOptionPane.showMessageDialog(null,"PRODUCTO NO GUARDADO EN LA TABLA INVENTARIO");
 
                     }
-
-
+                    // CIERRE DE CONEXIÓN
                     conexion.close();
                     ps.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                } // INICIO BDD INSERTAR PRODUCTOS
+                } // INICIO BDD INSERTAR PRODUCTOS E INVENTARIO
 
                 try{//INICIO BDD SE CARGA NUEVAMENTE LOS DATOS DE PRODCUTO E INVENTARIO
+                    // CONEXIÓN BDD
                     Connection conexion;
                     conexion = getConection();
-
+                    // CONSULTA: DATOS DE PRODUCTOS EN TABLA PRODUCTOS E INVENTARIO
                     s = conexion.createStatement();
                     rs = s.executeQuery("SELECT producto.*, inventario.cantidad, inventario.precio_total  FROM (producto,inventario) WHERE id_producto=FK_id_producto");
-
+                    // SE OBTIENE LOS DATOS
                     rsmd = rs.getMetaData();
                     int columnCount = rsmd.getColumnCount();
-
+                    // SE CREA LA TALBA Y EL MODELO
                     modelo = (DefaultTableModel) table.getModel();
+                    // SE ELIMINA LOS DATOS DE LA TABLA PARA CARGAR DE NUEVO
                     modelo.setColumnCount(0);// Se elimina la columna de la tabla
                     modelo.setRowCount(0); // Se elimina las filas de la tabla
-                    // Add columns to table model
+
+                    // SE AGREGA LAS COLUMNAS A LA TABLA DEL MODELO
                     for (int i = 1; i <= columnCount; i++) {
                         modelo.addColumn(rsmd.getColumnName(i));
                     }
-
+                    // SE AGREGA LOS DATOS A LA TABLA
                     while (rs.next()) {
                         Object[] row = new Object[columnCount];
                         for (int i = 1; i <= columnCount; i++) {
@@ -375,15 +378,16 @@ public class Admin_stock {
                         }
                         modelo.addRow(row);
                     }
+                    // CIERRE DE CONEXIÓN
                     rs.close();
                     s.close();
                     conexion.close();
                 }catch (Exception ex) {
                     ex.printStackTrace();
-                }//INICIO BDD SE CARGA NUEVAMENTE LOS DATOS DE PRODCUTO E INVENTARIO
+                }//FIN BDD SE CARGA NUEVAMENTE LOS DATOS DE PRODCUTO E INVENTARIO
 
             }
-        }); // INICIO ACCIÓN AGREGAR NUEVO PRODUCTO
+        }); // FIN ACCIÓN AGREGAR NUEVO PRODUCTO
     }
     public static Connection getConection() // SE REALIZA LA CONEXIÓN CON BDD
     {
