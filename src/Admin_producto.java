@@ -81,7 +81,7 @@ public class Admin_producto {
             conexion = getConection();
             // CONSULTA: CARGAR DATOS DE PRODUCTO E INVENTARIO
             s = conexion.createStatement();
-            rs = s.executeQuery("SELECT producto.*, inventario.cantidad, inventario.precio_total  FROM (producto,inventario) WHERE id_producto=FK_id_producto");
+            rs = s.executeQuery("SELECT producto.*, inventario.cantidad, inventario.precio_total, inventario.fecha_registro as Fecha_factura  FROM (producto,inventario) WHERE id_producto=FK_id_producto");
 
             // SE OBTIENE LOS DATOS
             rsmd = rs.getMetaData();
@@ -196,7 +196,9 @@ public class Admin_producto {
                     if (!(res > 0)) {
                         JOptionPane.showMessageDialog(null, "DATOS NO GUARDADOS EN PRODUCTOS");
                     }
-
+                    // CIERRE DE CONEXIÓN
+                    conexion.close();
+                    ps.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 } // FIN BDD ACTUALIZAR PRODUCTO
@@ -217,6 +219,9 @@ public class Admin_producto {
                     if (!(res > 0)) {
                         JOptionPane.showMessageDialog(null, "DATOS NO GUARDADOS EN INVENTARIO");
                     }
+                    // CIERRE DE CONEXIÓN
+                    conexion.close();
+                    ps.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 } // INICIO BDD ACTUALIZAR INVENTARIO
@@ -226,7 +231,7 @@ public class Admin_producto {
                     conexion = getConection();
 
                     s = conexion.createStatement();
-                    rs = s.executeQuery("SELECT producto.*, inventario.cantidad, inventario.precio_total  FROM (producto,inventario) WHERE id_producto=FK_id_producto");
+                    rs = s.executeQuery("SELECT producto.*, inventario.cantidad, inventario.precio_total, inventario.fecha_registro as Fecha_factura  FROM (producto,inventario) WHERE id_producto=FK_id_producto");
 
                     // SE OBTIENE LOS DATOS
                     rsmd = rs.getMetaData();

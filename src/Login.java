@@ -28,7 +28,7 @@ public class Login{
         comboBox.addItem(" ");
         comboBox.addItem("ADMINISTRADOR");
         comboBox.addItem("VENTAS");
-
+        comboBox.addItem("SUPER_ADMIN");
         INGRESARButton.addActionListener(new ActionListener(){ // INICIO ACCIÓN INGRESAR AL SISTEMA
             @Override
             public void actionPerformed(ActionEvent e){
@@ -58,7 +58,6 @@ public class Login{
                                 admin.setLocationRelativeTo(null);
                                 admin.setVisible(true);
                                 correcto = true; // INGRESO CORRECTO
-
                             }
                         }
                         if(!correcto){ // SI EL INGRESO NO ES CORRECTO
@@ -95,6 +94,42 @@ public class Login{
                                 frame.setLocationRelativeTo(null);
                                 frame.setVisible(true);
                                 correcto = true; // SE INGRESÓ CORRECTAMENTE
+                            }
+                        }
+                        if(!correcto){ // ACCESO INCORRECTO
+                            JOptionPane.showMessageDialog(null, "El usuario o contraseña son incorrectos");
+                        }
+                        // CIERRE DE CONEXIÓN
+                        conexion.close();
+                        rs.close();
+                        s.close();
+                    }catch(Exception ex){
+                        ex.printStackTrace();
+                    } // FIN BDD CARGAR DATOS DE LOGIN DE VENTA
+                }
+                // SI EN EL COMBO BOX SE SELECCIONA "VENTAS"
+                if("SUPER_ADMIN" == comboBox.getSelectedItem()){
+                    try{ // INICIO BDD CARGAR DATOS DE LOGIN DE VENTA
+                        Connection conexion;
+                        conexion = getConection();
+
+                        s = conexion.createStatement();
+                        rs = s.executeQuery("SELECT * FROM login_sa");
+
+                        contrasenia.setText(new String(textCONTRA.getPassword()));
+
+                        while (rs.next()) {
+                            //Verifica si es correcto el usuario y contraseña del cajero
+                            if(textUSUARIO.getText().equals(rs.getString(2)) && contrasenia.getText().equals(rs.getString(3))){
+                                // SE ABRE LA VENTANA DE ADMINISTRACIÓN
+                                Super_Admin admin= new Super_Admin();
+                                admin.setName("MENU - SUPER ADMINISTRADOR");
+                                admin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                                admin.pack();
+                                admin.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                                admin.setLocationRelativeTo(null);
+                                admin.setVisible(true);
+                                correcto = true; // INGRESO CORRECTO
                             }
                         }
                         if(!correcto){ // ACCESO INCORRECTO

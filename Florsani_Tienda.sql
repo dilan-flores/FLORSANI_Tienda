@@ -18,12 +18,6 @@ contrasenia_user varchar(10) not null,
 constraint FK_ci_user foreign key (FK_ci_user) references usuario_venta(ci_user)
 );
 
-insert into usuario_venta values ("1727936070", "Dilan Alexander Flores Quimbia");
-insert into login_venta values ("1727936070", "DA_17", "1727");
-
-SELECT * FROM usuario_venta;
-SELECT * FROM login_venta;
-
 							/* ADMIN */
 /*DROP TABLE usuario_venta*/
 create table admin (
@@ -40,12 +34,28 @@ contrasenia_ad varchar(10) not null,
 constraint FK_ci_ad foreign key (FK_ci_ad) references admin(ci_ad)
 );
 
-							/* DATOS DE ADMINISTRADOS */
-insert into admin values ("1727936070", "Dilan Alexander Flores Quimbia");
-insert into login_admin values ("1727936070", "DA_17", "1727");
+							/* SUPER ADMIN */
+/*DROP TABLE usuario_venta*/
+create table super_admin (
+ci_sa varchar(10) not null primary key,
+nombres_sa varchar(60) not null
+);
+
+							/* LOGIN SUPER ADMIN */
+/*DROP TABLE login_admin*/
+create table login_sa(
+FK_ci_sa varchar(10) not null,
+usuario_sa varchar(10) not null,
+contrasenia_sa varchar(10) not null,
+constraint FK_ci_sa foreign key (FK_ci_sa) references super_admin(ci_sa)
+);
 
 SELECT * FROM admin;
 SELECT * FROM login_admin;
+
+							/* DATOS DE ADMINISTRADOS */
+insert into super_admin values ("1727936070", "Dilan Alexander Flores Quimbia");
+insert into login_sa values ("1727936070", "DA_17", "1727");
 
 							/*CLIENTE*/
 /*DROP TABLE cliente*/
@@ -101,8 +111,10 @@ constraint FKid_producto foreign key (FKid_producto) references producto(id_prod
 							/* VISUALIZACIÓN DE TABLAS */
 SELECT * FROM usuario_venta;
 SELECT * FROM admin;
+SELECT * FROM super_admin;
 SELECT * FROM login_venta;
 SELECT * FROM login_admin;
+SELECT * FROM login_sa;
 SELECT * FROM cliente;
 SELECT * FROM producto;
 SELECT * FROM inventario;
