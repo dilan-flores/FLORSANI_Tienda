@@ -44,6 +44,7 @@ public class venta_producto {
                                                                         /* VARIABLES EXTRAS */
     private JButton LimpiarCajaButton; // LIMPIA EL CONTENIDO PARA UNA NUEVA VENTA
     private JTable table; // PERMITE MOSTRAR LOS DATOS EN FORMA DE TABLA
+    private JButton CancelarButton;
     String cod; // OBTIENE EL ID DEL CLIENTE CON UN FORMATO ADECUADO
     String ced; // OBTIENE LA CÉDULA DEL CLIENTE EN UN FORMATO ADECUADO
     DefaultTableModel modelo = new DefaultTableModel(); // (CONTENEDOR DE LA TABLA) PERMITE MANETENER Y DEFINIR LOS DATOS QUE SE MOSTRARÁN EN LA TABLA
@@ -387,7 +388,7 @@ public class venta_producto {
                         if (rowCount == 0) { // SI LA CABECERA DE FACTURA ESTÁ FACÍA SE INGRESA "1"
                             Num_factura.setText("1");
                         } else {  // SE OBTIENE EL VALOR DE LA FACTURA ANTERIOR Y SE AUMENTA PARA LA NUEVA FACTURA
-                            rs = s.executeQuery("SELECT num_f FROM cab_trans ORDER by num_f DESC LIMIT 1");
+                            rs = s.executeQuery("SELECT num_f FROM cab_trans ORDER BY CAST(num_f AS SIGNED) DESC LIMIT 1");
                             while (rs.next()) {
                                 Num_factura.setText(rs.getString(1));
                                 //encontrado = true;
@@ -510,17 +511,95 @@ public class venta_producto {
             public void actionPerformed(ActionEvent e) {
                 // VACIAR CONTENIDO
                 modelo.setColumnCount(0);
+                modelo.setRowCount(0);
+                modelo.fireTableStructureChanged(); // Actualiza la estructura de la tabla
+                table.repaint();
+                // SE AGREGA LA CABECERA DE LA TABLA
+                String[] titulo = new String[]{"CÓDIGO", "PRODUCTO", "CANTIDAD", "PRECIO"};
+                modelo.setColumnIdentifiers(titulo);
+                table.setModel(modelo);
                 textCEDULA.setText("");
                 textNOMBRE.setText("");
                 textCUENTA.setText("");
                 textCODIGO.setText("");
                 textPRODUCTO.setText("");
+                textAGREGAR_A_CUENTA.setText("");
                 textPRECIO.setText("");
                 textCANTIDAD.setText("");
                 textCANTIDAD_A_COMPRAR.setText("");
             }
         }); // FIN ACCIÓN LIMPIAR CAJA
+        CancelarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try { // INCIO BDD INSERCIÓN DETALLE DE FACTURA
+
+                    // SE OBTIENE EL MODELO DE LA TABLA
+                    javax.swing.table.TableModel modeloTabla = table.getModel();
+
+                    // RECORRE LAS FILAS DE LA TABLA
+                    int filas = modeloTabla.getRowCount();
+                    for (int fila = 0; fila < filas; fila++) {
+                        // SE OBTIENE LOS VALORES DE CADA CELDA EN LA FILA ACTUAL
+                        String cod_producto = modeloTabla.getValueAt(fila, 0).toString();
+                        int cantidad = Integer.parseInt(modeloTabla.getValueAt(fila, 2).toString());
+                        double precio = Double.parseDouble(modeloTabla.getValueAt(fila, 3).toString());
+
+                        Connection conexion;
+                        conexion = getConection();
+
+                        //CONSULTA EN CLIENTE
+                        s = conexion.createStatement();
+                        rs = s.executeQuery("SELECT cantidad,precio_total FROM inventario WHERE FK_id_producto = " + cod_producto);
+                        // RECIBE LOS DATOS REQUERIDOS
+                        while (rs.next()) {
+                            textCANTIDAD.setText(rs.getString(1));
+                            textPRECIO.setText(rs.getString(2));
+                        }
+                        // CONSULTA: INSERCIÓN DE TABLA EN DETALLE DE FACTURA
+                        ps = conexion.prepareStatement("UPDATE inventario SET cantidad=?, precio_total=? WHERE FK_id_producto = " + cod_producto);
+                        // SE REESTABLECE LOS VALORES REDUCIDOS DE STOCK
+                        textCANTIDAD.setText(String.valueOf(Integer.parseInt(textCANTIDAD.getText()) + cantidad));
+                        textPRECIO.setText(String.valueOf(Float.parseFloat(textPRECIO.getText())+ precio));
+
+                        ps.setInt(1, Integer.parseInt(textCANTIDAD.getText()));
+                        ps.setDouble(2, Double.parseDouble(textPRECIO.getText()));
+                        // RESULTADOS DE LA CONSULTA
+                        res = ps.executeUpdate();
+                        if(!(res >0)){
+                            JOptionPane.showMessageDialog(null,"INVENTARIO NO ACTUALIZADO");
+                        }
+
+                        // CIERRE DE CONEXIÓN
+                        conexion.close();
+                        ps.close();
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                } // FIN BDD INSERCIÓN DETALLE DE FACTURA
+
+                // VACIAR CONTENIDO
+                modelo.setColumnCount(0);
+                modelo.setRowCount(0);
+                modelo.fireTableStructureChanged(); // Actualiza la estructura de la tabla
+                table.repaint();
+                // SE AGREGA LA CABECERA DE LA TABLA
+                String[] titulo = new String[]{"CÓDIGO", "PRODUCTO", "CANTIDAD", "PRECIO"};
+                modelo.setColumnIdentifiers(titulo);
+                table.setModel(modelo);
+                textCEDULA.setText("");
+                textNOMBRE.setText("");
+                textCUENTA.setText("");
+                textCODIGO.setText("");
+                textPRODUCTO.setText("");
+                textAGREGAR_A_CUENTA.setText("");
+                textPRECIO.setText("");
+                textCANTIDAD.setText("");
+                textCANTIDAD_A_COMPRAR.setText("");
+            }
+        });
     }
+
 
     public void agregar(){// INICIO ACCIÓN AGREGAR PRODUCTOS A LA TABLA
 
@@ -549,6 +628,9 @@ public class venta_producto {
         }
         // SE VA CALCULANDO EL VALOR TOTAL PARA LA FACTURA
         VALOR_A_PAGAR = String.valueOf(Double.parseDouble(VALOR_A_PAGAR) + Double.parseDouble(precio_total_producto.getText()));
+        //
+        modelo.fireTableDataChanged();
+        table.repaint();
     }// FIN ACCIÓN AGREGAR PRODUCTOS A LA TABLA
 
     public static Connection getConection() throws RuntimeException { // CONEXIÓN CON LA BDD

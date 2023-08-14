@@ -48,7 +48,7 @@ public class facturacion {
             conexion = getConection();
             // CONSULTA: ÚLTIMO NÚMERO DE LA FACTURA
             s = conexion.createStatement();
-            rs = s.executeQuery("SELECT * FROM cab_trans ORDER by num_f DESC LIMIT 1");
+            rs = s.executeQuery("SELECT * FROM cab_trans WHERE num_f = (SELECT MAX(CAST(num_f AS UNSIGNED)) FROM cab_trans)");
             // SE OBTIENE LOS DATOS DE LOS CAMPOS REQUERIDO
             while (rs.next()) {
                 textFACTURA.setText(rs.getString(1));
