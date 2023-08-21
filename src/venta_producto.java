@@ -527,6 +527,10 @@ public class venta_producto {
                 textPRECIO.setText("");
                 textCANTIDAD.setText("");
                 textCANTIDAD_A_COMPRAR.setText("");
+
+                // VALORES DE FACTURA CON VALOR CERO
+                VALOR_A_PAGAR = String.valueOf(0.0); // REALIZA TODOS LOS CÁLCULOS PARA EL VALOR TOTAL DE LA COMPRA
+                total_factura.setText(VALOR_A_PAGAR); // RECIBE EL VALOR TOTAL DE LA COMPRA
             }
         }); // FIN ACCIÓN LIMPIAR CAJA
         CancelarButton.addActionListener(new ActionListener() {
@@ -587,15 +591,18 @@ public class venta_producto {
                 String[] titulo = new String[]{"CÓDIGO", "PRODUCTO", "CANTIDAD", "PRECIO"};
                 modelo.setColumnIdentifiers(titulo);
                 table.setModel(modelo);
-                textCEDULA.setText("");
-                textNOMBRE.setText("");
-                textCUENTA.setText("");
+                //textCEDULA.setText("");
+                //textNOMBRE.setText("");
+                //textCUENTA.setText("");
                 textCODIGO.setText("");
                 textPRODUCTO.setText("");
                 textAGREGAR_A_CUENTA.setText("");
                 textPRECIO.setText("");
                 textCANTIDAD.setText("");
                 textCANTIDAD_A_COMPRAR.setText("");
+
+                VALOR_A_PAGAR = String.valueOf(0.0); // REALIZA TODOS LOS CÁLCULOS PARA EL VALOR TOTAL DE LA COMPRA
+                total_factura.setText(VALOR_A_PAGAR); // RECIBE EL VALOR TOTAL DE LA COMPRA
             }
         });
     }
@@ -638,7 +645,7 @@ public class venta_producto {
         try { // SE INGRESA DATOS DE LA BDD
             Class.forName("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/tienda", "root", "root"
+                    "jdbc:mysql://192.168.100.161:3306/tienda", "florcan", "1234"
             );
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
