@@ -45,9 +45,13 @@ public class venta_producto {
     private JButton LimpiarCajaButton; // LIMPIA EL CONTENIDO PARA UNA NUEVA VENTA
     private JTable table; // PERMITE MOSTRAR LOS DATOS EN FORMA DE TABLA
     private JButton CancelarButton;
+    private JTable tablaListaProductos; // PERMITE MOSTRAR LOS DATOS EN FORMA DE TABLA LISTA DE PRODUCTOS
+    private JTable tablaListaClientes;
     String cod; // OBTIENE EL ID DEL CLIENTE CON UN FORMATO ADECUADO
     String ced; // OBTIENE LA CÉDULA DEL CLIENTE EN UN FORMATO ADECUADO
     DefaultTableModel modelo = new DefaultTableModel(); // (CONTENEDOR DE LA TABLA) PERMITE MANETENER Y DEFINIR LOS DATOS QUE SE MOSTRARÁN EN LA TABLA
+    DefaultTableModel modelo_lista_producto = new DefaultTableModel(); // (CONTENEDOR DE LA TABLA) PERMITE MANETENER Y DEFINIR LOS DATOS DE LISTA DE PRODUCTOS QUE SE MOSTRARÁN EN LA TABLA
+    DefaultTableModel modelo_lista_cliente = new DefaultTableModel(); // (CONTENEDOR DE LA TABLA) PERMITE MANETENER Y DEFINIR LOS DATOS DE LISTA DE PRODUCTOS QUE SE MOSTRARÁN EN LA TABLA
     boolean encontrado; // VERIFICA SI SE ENCONTRO LA INFORMACIÓN REQUERIDA EN LA BDD
     JFormattedTextField precio_total_producto = new JFormattedTextField(); // RECIBE EL PRECIO TOTAL DE UN PRODUCTO (CANTIDAD * PRECIO DE VENTA)
     JFormattedTextField actualizar_cantidad = new JFormattedTextField(); // RECIBE LA CANTIDAD DE PRODUCTOS ACTUALIZADOS PARA INGRESAR EN INVENTARIO
@@ -56,7 +60,7 @@ public class venta_producto {
     String VALOR_A_PAGAR= String.valueOf(0.0); // REALIZA TODOS LOS CÁLCULOS PARA EL VALOR TOTAL DE LA COMPRA
     JFormattedTextField total_factura = new JFormattedTextField(); // RECIBE EL VALOR TOTAL DE LA COMPRA
     JFormattedTextField Num_factura = new JFormattedTextField(); // SE OBTIENE EL NÚMERO DE FACTURA CON NÚMERO SIGUIENTE AL ANTERIOR
-
+    ResultSetMetaData rsmd; // SE OBTIENE LA INFORMACIÓN DE LOS METADATOS DE RS
 
     public venta_producto() {
 
@@ -135,6 +139,82 @@ public class venta_producto {
         guardarButton.setVisible(false); // INICIALIZACIÓN DE BOTÓN GUARDAR COMO NO VISIBLE
 
         encontrado = false; // INICIALIZACIÓN COMO NO ENCONTRADO
+
+        try{ // INICIO BDD CARGAR PRODUCTOS E INVENTARIO
+            // CONEXIÓN BDD
+            Connection conexion;
+            conexion = getConection();
+            // CONSULTA: CARGAR DATOS DE PRODUCTO E INVENTARIO
+            s = conexion.createStatement();
+            rs = s.executeQuery("SELECT producto.id_producto, producto.producto FROM producto");
+
+            // SE OBTIENE LOS DATOS
+            rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            // SE CREA LA TABLA Y EL MODELO
+            modelo_lista_producto = (DefaultTableModel) tablaListaProductos.getModel();
+
+            // ELIMINACIÓN DE DATOS EN LA TABLA PARA CARGAR NUEVAMENTE
+            modelo_lista_producto.setColumnCount(0);// Se elimina la columna de la tabla
+            modelo_lista_producto.setRowCount(0); // Se elimina las filas de la tabla
+
+            // SE AGREGA LAS COLUMNAS A LA TABLA DEL MODELO
+            for (int i = 1; i <= columnCount; i++) {
+                modelo_lista_producto.addColumn(rsmd.getColumnName(i));
+            }
+            // SE VAN OBTENIENDO LOS DATOS E INSERTANDO EN LA TABLA
+            while (rs.next()) {
+                Object[] row = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    row[i - 1] = rs.getObject(i);
+                }
+                modelo_lista_producto.addRow(row);
+            }
+            // CIERRE DE CONEXIÓN
+            rs.close();
+            s.close();
+            conexion.close();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        } // FIN BDD CARGAR PRODUCTOS E INVENTARIO
+
+        try{ // INICIO BDD CARGAR CLIENTE
+            // CONEXIÓN BDD
+            Connection conexion;
+            conexion = getConection();
+            // CONSULTA: CARGAR DATOS DE PRODUCTO E INVENTARIO
+            s = conexion.createStatement();
+            rs = s.executeQuery("SELECT cliente.ci_cl, cliente.nombres_cl FROM cliente");
+
+            // SE OBTIENE LOS DATOS
+            rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            // SE CREA LA TABLA Y EL MODELO
+            modelo_lista_cliente = (DefaultTableModel) tablaListaClientes.getModel();
+
+            // ELIMINACIÓN DE DATOS EN LA TABLA PARA CARGAR NUEVAMENTE
+            modelo_lista_cliente.setColumnCount(0);// Se elimina la columna de la tabla
+            modelo_lista_cliente.setRowCount(0); // Se elimina las filas de la tabla
+
+            // SE AGREGA LAS COLUMNAS A LA TABLA DEL MODELO
+            for (int i = 1; i <= columnCount; i++) {
+                modelo_lista_cliente.addColumn(rsmd.getColumnName(i));
+            }
+            // SE VAN OBTENIENDO LOS DATOS E INSERTANDO EN LA TABLA
+            while (rs.next()) {
+                Object[] row = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    row[i - 1] = rs.getObject(i);
+                }
+                modelo_lista_cliente.addRow(row);
+            }
+            // CIERRE DE CONEXIÓN
+            rs.close();
+            s.close();
+            conexion.close();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        } // FIN BDD CARGAR CLIENTE
 
                                                                         /* PRODUCTO */
 
@@ -353,6 +433,50 @@ public class venta_producto {
                         // SE INHABILITA LA EDICIÓN
                         textNOMBRE.setEnabled(false);
                         textCUENTA.setEnabled(false);
+
+                        // VACIAR CONTENIDO DE TABLA
+                        modelo_lista_cliente.setColumnCount(0);
+                        modelo_lista_cliente.setRowCount(0);
+                        modelo_lista_cliente.fireTableStructureChanged(); // Actualiza la estructura de la tabla
+                        tablaListaClientes.repaint();
+
+                        // CARGAR NUEVAMENTE LA TABLA
+                        try{ // INICIO BDD CARGAR CLIENTE
+
+                            // NO SE ESTABLECE CONEXIÓN PORQUE AÚN NO SE CIERRA LA PREVIA CONEXIÓN
+                            // CONSULTA: CARGAR DATOS DE PRODUCTO E INVENTARIO
+                            s = conexion.createStatement();
+                            rs = s.executeQuery("SELECT cliente.ci_cl, cliente.nombres_cl FROM cliente");
+
+                            // SE OBTIENE LOS DATOS
+                            rsmd = rs.getMetaData();
+                            int columnCount = rsmd.getColumnCount();
+                            // SE CREA LA TABLA Y EL MODELO
+                            modelo_lista_cliente = (DefaultTableModel) tablaListaClientes.getModel();
+
+                            // ELIMINACIÓN DE DATOS EN LA TABLA PARA CARGAR NUEVAMENTE
+                            modelo_lista_cliente.setColumnCount(0);// Se elimina la columna de la tabla
+                            modelo_lista_cliente.setRowCount(0); // Se elimina las filas de la tabla
+
+                            // SE AGREGA LAS COLUMNAS A LA TABLA DEL MODELO
+                            for (int i = 1; i <= columnCount; i++) {
+                                modelo_lista_cliente.addColumn(rsmd.getColumnName(i));
+                            }
+                            // SE VAN OBTENIENDO LOS DATOS E INSERTANDO EN LA TABLA
+                            while (rs.next()) {
+                                Object[] row = new Object[columnCount];
+                                for (int i = 1; i <= columnCount; i++) {
+                                    row[i - 1] = rs.getObject(i);
+                                }
+                                modelo_lista_cliente.addRow(row);
+                            }
+                            // CIERRE DE CONEXIÓN
+                            //rs.close();
+                            //s.close();
+                            //conexion.close();
+                        }catch (Exception ex) {
+                            ex.printStackTrace();
+                        } // FIN BDD CARGAR CLIENTE
                     }else{
                         JOptionPane.showMessageDialog(null,"CLIENTE NO GUARDADO");
                     }
@@ -645,7 +769,7 @@ public class venta_producto {
         try { // SE INGRESA DATOS DE LA BDD
             Class.forName("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection(
-                    "jdbc:mysql://192.168.100.161:3306/tienda", "florcan", "1234"
+                    "jdbc:mysql://localhost/tienda", "root", "root"
             );
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

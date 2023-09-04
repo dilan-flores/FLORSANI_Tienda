@@ -398,7 +398,8 @@ public class Admin_cliente {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection(
-                    "jdbc:mysql://192.168.100.161/tienda", "florcan", "1234"
+                    /*"jdbc:mysql://192.168.0.201/tienda", "Florcan", "Laima2027"*/
+                    "jdbc:mysql://localhost/tienda", "root", "root"
             );
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

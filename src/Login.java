@@ -6,6 +6,11 @@ import java.sql.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+// PERMITE VISUALIZAR LAS IMÁGENES EN EL EJECUTABLE
+import java.io.IOException;
+import java.net.URL;
+import java.awt.BorderLayout;
+
 public class Login{
     public JPanel PanelLogin; // CONTENEDOR DE ELEMENTOS
     Statement s; // ENVIA CONSULTAS SQL A LA BDD
@@ -21,8 +26,29 @@ public class Login{
 
     public Login(){
         // SE AGREGA LAS IMÁGENES CORRESPONDIENTES
-        Imagen.setIcon( new ImageIcon("img/perfil.png"));
-        logo.setIcon( new ImageIcon("img/pets.png"));
+        String perfilImageUrl = "https://res.cloudinary.com/dh7xuwoyg/image/upload/v1693585109/Florcan_Tienda/pets_rbvhok.png";
+        //JLabel perfilImageLabel = new JLabel();
+        try {
+            URL url = new URL(perfilImageUrl);
+            logo.setIcon(new ImageIcon(url));
+        } catch (IOException e) {
+            // Manejar errores en la carga de la imagen
+            e.printStackTrace();
+            System.err.println("La imagen de perfil no se pudo cargar desde la URL de Cloudinary.");
+        }
+
+        // Cargar el logo desde Cloudinary
+        String logoImageUrl = "https://res.cloudinary.com/dh7xuwoyg/image/upload/v1693585099/Florcan_Tienda/perfil_uydrxo.png";
+        //JLabel logoImageLabel = new JLabel();
+        try {
+            URL url = new URL(logoImageUrl);
+            Imagen.setIcon(new ImageIcon(url));
+        } catch (IOException e) {
+            // Manejar errores en la carga de la imagen
+            e.printStackTrace();
+            System.err.println("El logo no se pudo cargar desde la URL de Cloudinary.");
+        }
+
         // SE CARGA EL COMBO BOX
         comboBox.removeAllItems();
         comboBox.addItem(" ");
@@ -151,7 +177,7 @@ public class Login{
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection(
-                    "jdbc:mysql://192.168.100.161/tienda", "florcan", "1234"
+                    "jdbc:mysql://localhost/tienda", "root", "root"
             );
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

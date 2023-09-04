@@ -111,7 +111,7 @@ public class Admin_producto {
             conexion.close();
         }catch (Exception ex) {
             ex.printStackTrace();
-        } // INICIO BDD CARGAR PRODUCTOS E INVENTARIO
+        } // FIN BDD CARGAR PRODUCTOS E INVENTARIO
 
         try {// INICIO BDD CARGAR PRODCUTOS
             // CONEXIÓN BDD
@@ -271,7 +271,7 @@ public class Admin_producto {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection(
-                    "jdbc:mysql://192.168.100.161/tienda", "florcan", "1234"
+                    "jdbc:mysql://localhost/tienda", "root", "root"
             );
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

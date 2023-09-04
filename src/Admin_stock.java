@@ -395,7 +395,7 @@ public class Admin_stock {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection(
-                    "jdbc:mysql://192.168.100.161/tienda", "florcan", "1234"
+                    "jdbc:mysql://localhost/tienda", "root", "root"
             );
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
